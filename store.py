@@ -1,24 +1,32 @@
+import locale
 from products import Product
+from termcolor import colored
+
+# Set the local currency to US dollars
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 class Store:
-
     def __init__(self, product_list):
         self.products = product_list
+
 
     def add_product(self, product):
         for item in product:
             self.products.append(item)
         return self.products
 
+
     def remove_product(self, product):
         self.products.pop(product)
         return self.products
+
 
     def get_total_quantity(self):
         total_quantity = 0
         for product in self.products:
             total_quantity += Product.get_quantity(product)
         return total_quantity
+
 
     def get_all_products(self):
         active_products = {}
@@ -29,6 +37,7 @@ class Store:
                 active_products[i] = description
                 product_number += 1
         return active_products
+
 
     def order(self, shopping_list):
         price = 0
@@ -43,7 +52,7 @@ class Store:
         if price == 0:
             print("Order cancelled.")
         else:
-            print("DETAILS")
+            print(f"Order placed. Total cost: {locale.currency(price, grouping=True)}")
+            print(colored("details:", color='light_grey', attrs=['bold']))
             for bought_item in bought_items:
-                print(f"{bought_item[0]} * {bought_item[1]} = {bought_item[2]}")
-            print(f"Order placed. Total cost: {price} dollars.")
+                print(f"{bought_item[0]} X {bought_item[1]} units -> {locale.currency(bought_item[2], grouping=True)}")

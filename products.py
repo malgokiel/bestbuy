@@ -1,7 +1,7 @@
+import locale
 
 class Product:
      def __init__(self, name, price, quantity):
-
          try:
              self.name = name
              self.price = price
@@ -10,8 +10,10 @@ class Product:
          except ValueError:
              print("One or more values is incorrect")
 
+
      def get_quantity(self):
          return float(self.quantity)
+
 
      def set_quantity(self, quantity):
          self.quantity = quantity
@@ -19,16 +21,18 @@ class Product:
              self.active = False
              return self.active
 
+
      def is_active(self):
          return self.active
 
+
      def show(self):
-         return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
+         return f"{self.name}, Price: {locale.currency(self.price, grouping=True)}, Quantity: {int(self.quantity)}"
+
 
      def buy(self, quantity):
-
          if quantity > self.get_quantity():
-             print(f"Not enough units in store: {self.name} * {quantity} was removed from the bill.")
+             print(f"Not enough units in store:\n{self.name} X {quantity} units was removed from the bill.\n")
              return 0
          else:
              self.quantity = self.get_quantity() - quantity
