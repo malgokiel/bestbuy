@@ -26,7 +26,12 @@ class Product:
          return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
 
      def buy(self, quantity):
-         self.quantity = self.get_quantity() - quantity
-         self.set_quantity(self.quantity)
-         purchase_price = self.price * quantity
-         return purchase_price
+
+         if quantity > self.get_quantity():
+             print(f"Not enough units in store: {self.name} * {quantity} was removed from the bill.")
+             return 0
+         else:
+             self.quantity = self.get_quantity() - quantity
+             self.set_quantity(self.quantity)
+             purchase_price = self.price * quantity
+             return purchase_price

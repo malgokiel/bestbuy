@@ -22,8 +22,8 @@ def start(best_buy):
         while True:
             try:
                 user_choice = int(input("Please choose a number: "))
-                print()
                 if user_choice not in [1, 2, 3, 4]:
+                    print("Enter a valid option")
                     pass
                 else:
                     break
@@ -34,9 +34,12 @@ def start(best_buy):
             all_products = actions[user_choice]()
             number  = 1
             print("OUR PRODUCTS:")
-            for item in all_products.values():
-                print(f"{number}. {item}")
-                number += 1
+            if not all_products:
+                print("We are sold out.")
+            else:
+                for item in all_products.values():
+                    print(f"{number}. {item}")
+                    number += 1
 
         elif user_choice == 2:
             total = actions[user_choice]()
@@ -49,7 +52,7 @@ def start(best_buy):
             for number, item in all_products.items():
                 print(f"{number+1}. {item}")
 
-            print("Leave at least one of the fields empty if you want to close the buy.")
+            print("\nLeave at least one of the fields empty if you want to close the bill.")
             while True:
                 which_product = input("Enter a # of the product you want to purchase: ")
                 quantity = input("How many units do you want to buy?: ")
@@ -61,10 +64,11 @@ def start(best_buy):
                         quantity = int(quantity)
                         shopping_list.append((best_buy.products[which_product-1], quantity))
                     except IndexError:
-                        print("Error when making order.")
+                        print("Error when placing order. Try again.")
                     except ValueError:
-                        print("Error when making order.")
+                        print("Error when placing order. Try again.")
 
+            print("*** SUMMARY ***")
             actions[user_choice](shopping_list)
 
         elif user_choice == 4:

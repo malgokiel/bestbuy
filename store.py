@@ -32,8 +32,18 @@ class Store:
 
     def order(self, shopping_list):
         price = 0
+        bought_items = []
         for i in range(len(shopping_list)):
             product_to_buy, quantity = shopping_list[i][0], shopping_list[i][1]
             sub_price = Product.buy(product_to_buy, quantity)
+            if sub_price > 0:
+                bought_items.append([product_to_buy.name, quantity, sub_price])
             price += sub_price
-        print(f"Order placed. Total cost: {price} dollars.")
+
+        if price == 0:
+            print("Order cancelled.")
+        else:
+            print("DETAILS")
+            for bought_item in bought_items:
+                print(f"{bought_item[0]} * {bought_item[1]} = {bought_item[2]}")
+            print(f"Order placed. Total cost: {price} dollars.")
