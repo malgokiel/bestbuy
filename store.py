@@ -5,6 +5,8 @@ from termcolor import colored
 # Set the local currency to US dollars
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
+COLOR_THEME = 'magenta'
+
 class Store:
     def __init__(self, product_list):
         self.products = product_list
@@ -53,6 +55,6 @@ class Store:
             print("Order cancelled.")
         else:
             print(f"Order placed. Total cost: {locale.currency(price, grouping=True)}")
-            print(colored("details:", color='light_grey', attrs=['bold']))
+            print(colored("details:", color=COLOR_THEME, attrs=['bold']))
             for bought_item in bought_items:
                 print(f"{bought_item[0]} X {bought_item[1]} units -> {locale.currency(bought_item[2], grouping=True)}")

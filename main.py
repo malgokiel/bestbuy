@@ -5,6 +5,7 @@ from termcolor import colored
 from messages import invalid_input, order_error, decorator
 
 VALID_MENU_OPTIONS = [1, 2, 3, 4]
+COLOR_THEME = 'magenta'
 
 def start(best_buy):
     """
@@ -17,7 +18,7 @@ def start(best_buy):
     1. List all products in store
     2. Show total amount in store
     3. Make an order
-    4. Quit\n""", color='light_grey', attrs=['bold']))
+    4. Quit\n""", color=COLOR_THEME, attrs=['bold']))
 
         user_choice = get_user_input()
         all_products = best_buy.get_all_products()
@@ -32,12 +33,12 @@ def start(best_buy):
         elif user_choice == 3:
             shopping_list = get_shopping_list(best_buy, all_products)
             print(f"\n{decorator}")
-            print(colored("*** SUMMARY ***", color='light_grey', attrs=['bold']))
+            print(colored("*** SUMMARY ***", color=COLOR_THEME, attrs=['bold']))
             best_buy.order(shopping_list)
             print(decorator)
 
         elif user_choice == 4:
-            print(colored("Thank you for shopping with us!", color='light_grey', attrs=['bold']))
+            print(colored("Thank you for shopping with us!", color=COLOR_THEME, attrs=['bold']))
             sys.exit()
 
 
@@ -62,7 +63,7 @@ def print_all_products(all_products):
     Displays a list of products available in the store.
     """
     item_number_to_display = 1
-    print(colored("\nOUR PRODUCTS:", color='light_grey', attrs=['bold']))
+    print(colored("\nOUR PRODUCTS:", color=COLOR_THEME, attrs=['bold']))
     if not all_products:
         print("We are sold out.")
     else:
@@ -77,11 +78,11 @@ def get_shopping_list(best_buy, all_products):
     returns a list of tuples of the product and the quantity.
     """
     shopping_list = []
-    print(colored("\nOUR OFFER: ", color='light_grey', attrs=['bold']))
+    print(colored("\nOUR OFFER: ", color=COLOR_THEME, attrs=['bold']))
     for number, item in all_products.items():
         print(f"{number + 1}. {item}")
 
-    print(colored("\n__Leave at least one of the fields empty if you want to close the bill__", color='light_grey',
+    print(colored("\n__Leave at least one of the fields empty if you want to close the bill__", color=COLOR_THEME,
                   attrs=['bold']))
     while True:
         which_product = input("\nEnter a # of the product you want to purchase: ")
@@ -112,6 +113,7 @@ def main():
 
     # starts the shop simulator
     start(best_buy)
+
 
 if __name__ == "__main__":
     main()
