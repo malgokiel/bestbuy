@@ -21,14 +21,12 @@ class Store:
         return total_quantity
 
     def get_all_products(self):
-        # active_products = [product for product in self.products if product.is_active()]
-        # return active_products
         active_products = {}
         product_number = 1
-        for product in self.products:
+        for i, product in enumerate(self.products):
             if product.is_active():
                 description = product.show()
-                active_products[product_number] = description
+                active_products[i] = description
                 product_number += 1
         return active_products
 

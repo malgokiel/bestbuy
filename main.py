@@ -32,21 +32,24 @@ def start(best_buy):
 
         if user_choice == 1:
             all_products = actions[user_choice]()
+            number  = 1
             print("OUR PRODUCTS:")
-            for number, item in all_products.items():
+            for item in all_products.values():
                 print(f"{number}. {item}")
+                number += 1
+
         elif user_choice == 2:
             total = actions[user_choice]()
             print(f"Total amount of items in store: {int(total)}")
+
         elif user_choice == 3:
             shopping_list = []
             all_products = actions[1]()
-            copy_of_products = all_products.copy()
-            print("BEFORE BUY: ", copy_of_products)
             print("OUR OFFER: ")
-            for number, item in copy_of_products.items():
-                print(f"{number}. {item}")
+            for number, item in all_products.items():
+                print(f"{number+1}. {item}")
 
+            print("Leave at least one of the fields empty if you want to close the buy.")
             while True:
                 which_product = input("Enter a # of the product you want to purchase: ")
                 quantity = input("How many units do you want to buy?: ")
@@ -61,8 +64,9 @@ def start(best_buy):
                         print("Error when making order.")
                     except ValueError:
                         print("Error when making order.")
-            print("SHOPPING LIST:", shopping_list)
+
             actions[user_choice](shopping_list)
+
         elif user_choice == 4:
             print("Thank you for shopping with us!")
             sys.exit()
@@ -77,7 +81,6 @@ def main():
                     ]
 
     best_buy = store.Store(product_list)
-
     start(best_buy)
 
 if __name__ == "__main__":
