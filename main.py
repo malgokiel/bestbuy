@@ -1,7 +1,7 @@
-import store
-import products
 import sys
 from termcolor import colored
+import store
+import products
 from messages import invalid_input, order_error, decorator
 
 VALID_MENU_OPTIONS = [1, 2, 3, 4]
@@ -51,7 +51,6 @@ def get_user_input():
             user_choice = int(input("Please choose a number: "))
             if user_choice not in VALID_MENU_OPTIONS:
                 print(invalid_input)
-                pass
             else:
                 return user_choice
         except ValueError:
@@ -82,29 +81,34 @@ def get_shopping_list(best_buy, all_products):
     for number, item in all_products.items():
         print(f"{number + 1}. {item}")
 
-    print(colored("\n__Leave at least one of the fields empty if you want to close the bill__", color=COLOR_THEME,
-                  attrs=['bold']))
+    print(colored("\n__Leave at least one of the fields empty if you want to close the bill__",
+                  color=COLOR_THEME, attrs=['bold']))
     while True:
         which_product = input("\nEnter a # of the product you want to purchase: ")
         quantity = input("How many units do you want to buy?: ")
-        if which_product == "" or quantity == "":
-            break
-        else:
+
+        if which_product != "" or quantity != "":
             try:
                 which_product = int(which_product)
                 quantity = int(quantity)
-                if products.Product.is_active(best_buy.products[which_product - 1]) and quantity > 0:
-                    shopping_list.append((best_buy.products[which_product - 1], quantity))
+                product_to_shop = best_buy.products[which_product - 1]
+                if products.Product.is_active(product_to_shop) and quantity > 0:
+                    shopping_list.append((product_to_shop, quantity))
                 else:
                     print(order_error)
             except IndexError:
                 print(order_error)
             except ValueError:
                 print(order_error)
+        else:
+            break
     return shopping_list
 
 
 def main():
+    """
+    Initializes Store object and runs store simulation
+    """
     # setup initial stock of inventory
     product_list = [products.Product("M", price=1450, quantity=100),
                     products.Product("Bose QuietComfort Earbuds", price=250.99, quantity=500),

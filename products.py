@@ -1,7 +1,20 @@
 import locale
 
 class Product:
-     def __init__(self, name, price, quantity):
+    """
+    Creates a Product object of parameters name, price and quantity.
+    Has various methods to:
+    extract product's quantity,
+    set the quantity,
+    show if a product is active,
+    display info about a product and
+    updates a product in case of purchase.
+    """
+    def __init__(self, name, price, quantity):
+        """
+        Constructor, checks if passed parameters
+        are correct and creates a new product.
+        """
         is_name = isinstance(name, str)
         is_price = isinstance(price, (int, float))
         is_quantity = isinstance(quantity, int)
@@ -20,31 +33,53 @@ class Product:
         except ValueError as parameter_error:
             print(parameter_error)
 
-     def get_quantity(self):
-         return float(self.quantity)
+
+    def get_quantity(self):
+        """
+        Gets product's quantity
+        """
+        return float(self.quantity)
 
 
-     def set_quantity(self, quantity):
-         self.quantity = quantity
-         if self.quantity == 0:
-             self.active = False
-             return self.active
+    def set_quantity(self, quantity):
+        """
+        Sets new quantity and if new quantity drops to zero deactivates product
+        """
+        self.quantity = quantity
+        if self.quantity == 0:
+            self.active = False
+            return self.active
 
 
-     def is_active(self):
-         return self.active
+    def is_active(self):
+        """
+        Returns a bool True if product is active and False if not.
+        """
+        return self.active
 
 
-     def show(self):
-         return f"{self.name}, Price: {locale.currency(self.price, grouping=True)}, Quantity: {int(self.quantity)}"
+    def show(self):
+        """
+        Returns a string representation of a product showing its attributes.
+        :return:
+        """
+        return (f"{self.name}, "
+                f"Price: {locale.currency(self.price, grouping=True)}, "
+                f"Quantity: {int(self.quantity)}")
 
 
-     def buy(self, quantity):
-         if quantity > self.get_quantity():
-             print(f"Not enough units in store:\n{self.name} X {quantity} units was removed from the bill.\n")
-             return 0
-         else:
-             self.quantity = self.get_quantity() - quantity
-             self.set_quantity(self.quantity)
-             purchase_price = self.price * quantity
-             return purchase_price
+    def buy(self, quantity):
+        """
+        Checks if there is enough units to purchase a product,
+        if yes calls a function to update the quantity,
+        Calculates and returns a price of a purchase.
+        """
+        if quantity > self.get_quantity():
+            print(f"Not enough units in store:\n"
+                f"{self.name} X {quantity} units was removed from the bill.\n")
+            return 0
+        else:
+            self.quantity = self.get_quantity() - quantity
+            self.set_quantity(self.quantity)
+            purchase_price = self.price * quantity
+            return purchase_price
