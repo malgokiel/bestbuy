@@ -87,5 +87,4 @@ class Store:
             print(colored("details:", color=COLOR_THEME, attrs=['bold']))
             for bought_item in bought_items:
                 print(f"{bought_item[0]} X {bought_item[1]} "
-                      f"units -> {locale.currency(bought_item[2], 
-                                                  grouping=True)}")
+                      f"units -> {locale.currency(bought_item[2], grouping=True)}")
