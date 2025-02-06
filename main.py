@@ -93,7 +93,7 @@ def get_shopping_list(best_buy, all_products):
             try:
                 which_product = int(which_product)
                 quantity = int(quantity)
-                if products.Product.is_active(best_buy.products[which_product - 1]):
+                if products.Product.is_active(best_buy.products[which_product - 1]) and quantity > 0:
                     shopping_list.append((best_buy.products[which_product - 1], quantity))
                 else:
                     print(order_error)
