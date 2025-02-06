@@ -2,14 +2,23 @@ import locale
 
 class Product:
      def __init__(self, name, price, quantity):
-         try:
-             self.name = name
-             self.price = price
-             self.quantity = quantity
-             self.active = True
-         except ValueError:
-             print("One or more values is incorrect")
+        is_name = isinstance(name, str)
+        is_price = isinstance(price, (int, float))
+        is_quantity = isinstance(quantity, int)
+        try:
+            if not is_name or not is_price or not is_quantity or len(name) <= 1:
+                self.active = False
+                self.name = None
+                self.quantity = 0
+                self.price = 0
+                raise ValueError(f"Invalid parameter(s). {name} not added to the store")
 
+            self.name = name
+            self.price = price
+            self.quantity = quantity
+            self.active = True
+        except ValueError as parameter_error:
+            print(parameter_error)
 
      def get_quantity(self):
          return float(self.quantity)

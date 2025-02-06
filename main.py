@@ -93,7 +93,10 @@ def get_shopping_list(best_buy, all_products):
             try:
                 which_product = int(which_product)
                 quantity = int(quantity)
-                shopping_list.append((best_buy.products[which_product - 1], quantity))
+                if products.Product.is_active(best_buy.products[which_product - 1]):
+                    shopping_list.append((best_buy.products[which_product - 1], quantity))
+                else:
+                    print(order_error)
             except IndexError:
                 print(order_error)
             except ValueError:
@@ -103,8 +106,8 @@ def get_shopping_list(best_buy, all_products):
 
 def main():
     # setup initial stock of inventory
-    product_list = [products.Product("MacBook Air M2", price=1450, quantity=100),
-                    products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+    product_list = [products.Product("M", price=1450, quantity=100),
+                    products.Product("Bose QuietComfort Earbuds", price=250.99, quantity=500),
                     products.Product("Google Pixel 7", price=500, quantity=250)
                     ]
 
