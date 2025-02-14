@@ -20,7 +20,7 @@ class Product:
         is_quantity = isinstance(quantity, int)
         try:
             if not is_name or not is_price or not is_quantity or len(name) <= 1:
-                self.active = False
+                Product.deactivate(self)
                 self.name = None
                 self.quantity = 0
                 self.price = 0
@@ -29,7 +29,7 @@ class Product:
             self.name = name
             self.price = price
             self.quantity = quantity
-            self.active = True
+            Product.activate(self)
         except ValueError as parameter_error:
             print(parameter_error)
 
@@ -47,8 +47,7 @@ class Product:
         """
         self.quantity = quantity
         if self.quantity == 0:
-            self.active = False
-            return self.active
+            Product.deactivate(self)
 
 
     def is_active(self):
@@ -56,6 +55,20 @@ class Product:
         Returns a bool True if product is active and False if not.
         """
         return self.active
+
+
+    def activate(self):
+        """
+        Activates a product.
+        """
+        self.active = True
+
+
+    def deactivate(self):
+        """
+        Deactivates a product
+        """
+        self.active = False
 
 
     def show(self):
