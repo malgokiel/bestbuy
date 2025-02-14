@@ -21,9 +21,9 @@ def start(best_buy):
     4. Quit\n""", color=COLOR_THEME, attrs=['bold']))
 
         user_choice = get_user_input()
-        all_products = best_buy.get_all_products()
 
         if user_choice == 1:
+            all_products = best_buy.get_all_products()
             print_all_products(all_products)
 
         elif user_choice == 2:
@@ -31,6 +31,7 @@ def start(best_buy):
             print(f"\nTotal amount of items in store: {int(total)}")
 
         elif user_choice == 3:
+            all_products = best_buy.get_all_products()
             shopping_list = get_shopping_list(best_buy, all_products)
             print(f"\n{decorator}")
             print(colored("*** SUMMARY ***", color=COLOR_THEME, attrs=['bold']))
@@ -61,14 +62,12 @@ def print_all_products(all_products):
     """
     Displays a list of products available in the store.
     """
-    item_number_to_display = 1
     print(colored("\nOUR PRODUCTS:", color=COLOR_THEME, attrs=['bold']))
     if not all_products:
         print("We are sold out.")
     else:
-        for item in all_products.values():
-            print(f"{item_number_to_display}. {item}")
-            item_number_to_display += 1
+        for i, item in enumerate(all_products.values(), 1):
+            print(f"{i}. {item}")
 
 
 def get_shopping_list(best_buy, all_products):
@@ -81,27 +80,45 @@ def get_shopping_list(best_buy, all_products):
     for number, item in all_products.items():
         print(f"{number + 1}. {item}")
 
-    print(colored("\n__Leave at least one of the fields empty if you want to close the bill__",
+    print(colored("\n__place your order__",
                   color=COLOR_THEME, attrs=['bold']))
+
+    bought_in_session = {}
     while True:
         which_product = input("\nEnter a # of the product you want to purchase: ")
         quantity = input("How many units do you want to buy?: ")
 
-        if which_product != "" or quantity != "":
-            try:
-                which_product = int(which_product)
-                quantity = int(quantity)
-                product_to_shop = best_buy.products[which_product - 1]
-                if products.Product.is_active(product_to_shop) and quantity > 0:
+        try:
+            which_product = int(which_product)
+            quantity = int(quantity)
+            product_to_shop = best_buy.products[which_product - 1]
+            if products.Product.is_active(product_to_shop) and quantity > 0:
+                current_availability = products.Product.get_quantity(product_to_shop)
+                if current_availability - quantity - bought_in_session.get(which_product-1, 0) >= 0:
                     shopping_list.append((product_to_shop, quantity))
+                    if which_product-1 in bought_in_session.keys():
+                        bought_in_session[which_product - 1] += quantity
+                    else:
+                        bought_in_session[which_product-1] = quantity
                 else:
-                    print(order_error)
-            except IndexError:
+                    print(colored(f"Not enough units in stock. Still available: {int(current_availability) - bought_in_session[which_product-1]}", color='light_red'))
+            else:
                 print(order_error)
-            except ValueError:
-                print(order_error)
+                print(colored("Incorrect product ID or negative quantity.", color='light_red'))
+        except IndexError:
+            print(order_error)
+            print(colored("Invalid product number.", color='light_red'))
+        except ValueError:
+            print(order_error)
+            print(colored("You missed a field or did not enter a number.", color='light_red'))
+        checkout = input("Checkout? [y, n]: ")
+        while checkout.lower() not in ["y", "n"]:
+            checkout = input("Checkout? [y, n]: ")
+        if checkout.lower() == "n":
+            continue
         else:
             break
+
     return shopping_list
 
 
