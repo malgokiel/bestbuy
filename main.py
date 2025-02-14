@@ -123,7 +123,7 @@ def get_shopping_list(best_buy, all_products):
 
         checkout = input(colored("Checkout? [y, n]: ", color=STORE_COLOR_THEME, attrs=['bold']))
         while checkout.lower() not in ["y", "n"]:
-            checkout = input("Checkout? [y, n]: ")
+            checkout = input(colored("Checkout? [y, n]: ", color=STORE_COLOR_THEME, attrs=['bold']))
         if checkout.lower() == "n":
             continue
         else:
