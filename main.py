@@ -5,7 +5,8 @@ import products
 from messages import invalid_input, order_error, decorator
 
 VALID_MENU_OPTIONS = [1, 2, 3, 4]
-COLOR_THEME = 'magenta'
+STORE_COLOR_THEME = 'magenta'
+ERROR_COLOR_THEME = 'light_red'
 
 def start(best_buy):
     """
@@ -18,7 +19,7 @@ def start(best_buy):
     1. List all products in store
     2. Show total amount in store
     3. Make an order
-    4. Quit\n""", color=COLOR_THEME, attrs=['bold']))
+    4. Quit\n""", color=STORE_COLOR_THEME, attrs=['bold']))
 
         user_choice = get_user_input()
 
@@ -34,12 +35,12 @@ def start(best_buy):
             all_products = best_buy.get_all_products()
             shopping_list = get_shopping_list(best_buy, all_products)
             print(f"\n{decorator}")
-            print(colored("*** SUMMARY ***", color=COLOR_THEME, attrs=['bold']))
+            print(colored("*** SUMMARY ***", color=STORE_COLOR_THEME, attrs=['bold']))
             best_buy.order(shopping_list)
             print(decorator)
 
         elif user_choice == 4:
-            print(colored("Thank you for shopping with us!", color=COLOR_THEME, attrs=['bold']))
+            print(colored("Thank you for shopping with us!", color=STORE_COLOR_THEME, attrs=['bold']))
             sys.exit()
 
 
@@ -62,7 +63,7 @@ def print_all_products(all_products):
     """
     Displays a list of products available in the store.
     """
-    print(colored("\nOUR PRODUCTS:", color=COLOR_THEME, attrs=['bold']))
+    print(colored("\nOUR PRODUCTS:", color=STORE_COLOR_THEME, attrs=['bold']))
     if not all_products:
         print("We are sold out.")
     else:
@@ -76,12 +77,12 @@ def get_shopping_list(best_buy, all_products):
     returns a list of tuples of the product and the quantity.
     """
     shopping_list = []
-    print(colored("\nOUR OFFER: ", color=COLOR_THEME, attrs=['bold']))
+    print(colored("\nOUR OFFER: ", color=STORE_COLOR_THEME, attrs=['bold']))
     for number, item in all_products.items():
         print(f"{number + 1}. {item}")
 
     print(colored("\n__place your order__",
-                  color=COLOR_THEME, attrs=['bold']))
+                  color=STORE_COLOR_THEME, attrs=['bold']))
 
     bought_in_session = {}
     while True:
@@ -92,26 +93,35 @@ def get_shopping_list(best_buy, all_products):
             which_product = int(which_product)
             quantity = int(quantity)
             product_to_shop = best_buy.products[which_product - 1]
+
             if products.Product.is_active(product_to_shop) and quantity > 0:
+
                 current_availability = products.Product.get_quantity(product_to_shop)
-                if current_availability - quantity - bought_in_session.get(which_product-1, 0) >= 0:
+                availability_in_session = current_availability - quantity - bought_in_session.get(which_product-1, 0)
+                if availability_in_session >= 0:
                     shopping_list.append((product_to_shop, quantity))
+
                     if which_product-1 in bought_in_session.keys():
                         bought_in_session[which_product - 1] += quantity
                     else:
                         bought_in_session[which_product-1] = quantity
+
                 else:
-                    print(colored(f"Not enough units in stock. Still available: {int(current_availability) - bought_in_session[which_product-1]}", color='light_red'))
+                    print(colored(
+                        f"Not enough units in stock. Still available: "
+                        f"{int(current_availability) - bought_in_session.get(which_product-1, 0)}"
+                        , color=ERROR_COLOR_THEME))
             else:
                 print(order_error)
-                print(colored("Incorrect product ID or negative quantity.", color='light_red'))
+                print(colored("Incorrect product ID or negative quantity.", color=ERROR_COLOR_THEME))
         except IndexError:
             print(order_error)
-            print(colored("Invalid product number.", color='light_red'))
+            print(colored("Invalid product number.", color=ERROR_COLOR_THEME))
         except ValueError:
             print(order_error)
-            print(colored("You missed a field or did not enter a number.", color='light_red'))
-        checkout = input("Checkout? [y, n]: ")
+            print(colored("You missed a field or did not enter a number.", color=ERROR_COLOR_THEME))
+
+        checkout = input(colored("Checkout? [y, n]: ", color=STORE_COLOR_THEME, attrs=['bold']))
         while checkout.lower() not in ["y", "n"]:
             checkout = input("Checkout? [y, n]: ")
         if checkout.lower() == "n":
