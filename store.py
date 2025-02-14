@@ -27,8 +27,7 @@ class Store:
         """
         Adds a product into a store, returns updated products list.
         """
-        for item in product:
-            self.products.append(item)
+        self.products.append(product)
         return self.products
 
 
@@ -36,7 +35,12 @@ class Store:
         """
         Removes a product from a list and returns updated list.
         """
-        self.products.pop(product)
+        updated_products = []
+        for element in self.products:
+            if element != product:
+                updated_products.append(element)
+
+        self.products = updated_products
         return self.products
 
 
@@ -81,7 +85,7 @@ class Store:
             price += sub_price
 
         if price == 0:
-            print("Order cancelled.")
+            print("The shopping list is empty. Order cancelled.")
         else:
             print(f"Order placed. Total cost: {locale.currency(price, grouping=True)}")
             print(colored("details:", color=COLOR_THEME, attrs=['bold']))
