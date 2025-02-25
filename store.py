@@ -79,7 +79,7 @@ class Store:
         bought_items = []
         for i, _ in enumerate(shopping_list):
             product_to_buy, quantity = shopping_list[i][0], shopping_list[i][1]
-            sub_price = Product.buy(product_to_buy, quantity)
+            sub_price = product_to_buy.buy(quantity)
             if sub_price > 0:
                 bought_items.append([product_to_buy.name, quantity, sub_price])
             price += sub_price

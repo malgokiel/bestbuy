@@ -15,23 +15,34 @@ class Product:
         Constructor, checks if passed parameters
         are correct and creates a new product.
         """
-        is_name = isinstance(name, str)
-        is_price = isinstance(price, (int, float))
-        is_quantity = isinstance(quantity, int)
+        self.active = None
         try:
-            if not is_name or not is_price or not is_quantity or len(name) <= 1:
+            if not self.are_args_valid(name, price, quantity):
                 Product.deactivate(self)
                 self.name = None
                 self.quantity = 0
                 self.price = 0
                 raise ValueError(f"Invalid parameter(s). {name} not added to the store")
-
-            self.name = name
-            self.price = price
-            self.quantity = quantity
-            Product.activate(self)
+            else:
+                self.name = name
+                self.price = price
+                self.quantity = quantity
+                Product.activate(self)
         except ValueError as parameter_error:
             print(parameter_error)
+
+
+    def are_args_valid(self, name, price, quantity):
+        is_name = isinstance(name, str)
+        is_price = isinstance(price, (int, float))
+        is_quantity = isinstance(quantity, int)
+
+        if not is_name or not is_price or not is_quantity or len(name) <= 1 or price <= 0 or quantity <= 0:
+            args_valid = False
+        else:
+            args_valid = True
+
+        return args_valid
 
 
     def get_quantity(self):
@@ -87,7 +98,7 @@ class Product:
         if yes calls a function to update the quantity,
         Calculates and returns a price of a purchase.
         """
-        if quantity > self.get_quantity():
+        if quantity > self.get_quantity() and not isinstance(self, NonStockedProduct):
             print(f"Not enough units in store:\n"
                 f"{self.name} X {quantity} units was removed from the bill.\n")
             return 0
@@ -95,4 +106,49 @@ class Product:
             self.quantity = self.get_quantity() - quantity
             self.set_quantity(self.quantity)
             purchase_price = self.price * quantity
+
             return purchase_price
+
+
+class NonStockedProduct(Product):
+    def __init__(self, name, price, quantity=0):
+        super().__init__(name, price, quantity)
+
+
+    def are_args_valid(self, name, price, quantity):
+        args_valid = super().are_args_valid(name, price, quantity)
+        if quantity == 0:
+            args_valid = True
+
+        return args_valid
+
+    def show(self):
+        """
+        Returns a string representation of a product showing its attributes.
+        """
+        return (f"{self.name}, "
+                f"Price: {locale.currency(self.price, grouping=True)}")
+
+    def buy(self, quantity):
+        purchase_price = self.price * quantity
+        return purchase_price
+
+
+class LimitedProduct(Product):
+    def __init__(self, name, price, quantity, maximum=1):
+        super().__init__(name, price, quantity)
+        self.maximum = maximum
+
+
+    def show(self):
+        """
+        Returns a string representation of a product showing its attributes.
+        """
+        return (f"{self.name}, "
+                f"Price: {locale.currency(self.price, grouping=True)}, "
+                f"Maximum: {self.maximum}")
+
+
+    def buy(self, quantity):
+        purchase_price = self.price * quantity
+        return purchase_price

@@ -3,6 +3,7 @@ from termcolor import colored
 import store
 import products
 from messages import invalid_input, order_error, decorator
+from products import NonStockedProduct
 
 VALID_MENU_OPTIONS = [1, 2, 3, 4]
 STORE_COLOR_THEME = 'magenta'
@@ -94,23 +95,28 @@ def get_shopping_list(best_buy, all_products):
             quantity = int(quantity)
             product_to_shop = best_buy.products[which_product - 1]
 
-            if products.Product.is_active(product_to_shop) and quantity > 0:
+            if products.Product.is_active(product_to_shop) and not isinstance(product_to_shop, NonStockedProduct) and quantity > 0:
 
                 current_availability = products.Product.get_quantity(product_to_shop)
                 availability_in_session = current_availability - quantity - bought_in_session.get(which_product-1, 0)
                 if availability_in_session >= 0:
+                    if isinstance(product_to_shop, products.LimitedProduct) and quantity > 1:
+                        print("Shipping can only be purchased once per order, we adjusted it for you.")
+                        quantity = 1
+
                     shopping_list.append((product_to_shop, quantity))
 
                     if which_product-1 in bought_in_session.keys():
                         bought_in_session[which_product - 1] += quantity
                     else:
                         bought_in_session[which_product-1] = quantity
-
                 else:
                     print(colored(
                         f"Not enough units in stock. Still available: "
                         f"{int(current_availability) - bought_in_session.get(which_product-1, 0)}"
                         , color=ERROR_COLOR_THEME))
+            elif isinstance(product_to_shop, NonStockedProduct):
+                shopping_list.append((product_to_shop, quantity))
             else:
                 print(order_error)
                 print(colored("Incorrect product ID or negative quantity.", color=ERROR_COLOR_THEME))
@@ -137,17 +143,25 @@ def main():
     Initializes Store object and runs store simulation
     """
     # setup initial stock of inventory
-    product_list = [products.Product("MacBook Air M2", price=1450, quantity=100),
-                    products.Product("Bose QuietComfort Earbuds", price=250.99, quantity=500),
-                    products.Product("Google Pixel 7", price=500, quantity=250)
-                    ]
+    # product_list = [products.Product("MacBook Air M2", price=1450, quantity=100),
+    #                 products.Product("Bose QuietComfort Earbuds", price=250.99, quantity=500),
+    #                 products.Product("Google Pixel 7", price=500, quantity=250)
+    #                 ]
+    #
+    # # initialises best_buy as a Store object
+    # best_buy = store.Store(product_list)
 
-    # initialises best_buy as a Store object
+    # setup initial stock of inventory
+    product_list = [products.Product("MacBook Air M2", price=1450, quantity=100),
+                    products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+                    products.Product("Google Pixel 7", price=500, quantity=250),
+                    products.NonStockedProduct("Windows License", price=125),
+                    products.LimitedProduct("Shipping", price=10, quantity=250, maximum=1)
+                    ]
     best_buy = store.Store(product_list)
 
     # starts the shop simulator
     start(best_buy)
-
 
 if __name__ == "__main__":
     main()
