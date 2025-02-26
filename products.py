@@ -35,6 +35,10 @@ class Product:
 
 
     def are_args_valid(self, name, price, quantity):
+        """
+        Checks if initialization arguments are correct.
+        Returns True or False.
+        """
         is_name = isinstance(name, str)
         is_price = isinstance(price, (int, float))
         is_quantity = isinstance(quantity, int)
@@ -48,10 +52,16 @@ class Product:
 
 
     def get_promotion(self):
+        """
+        Fetches promotion applied to a Product
+        """
         return self.promotion
 
 
     def set_promotion(self, promotion):
+        """
+        Sets a promotion for a product.
+        """
         self.promotion = promotion
 
 
@@ -95,7 +105,6 @@ class Product:
     def show(self):
         """
         Returns a string representation of a product showing its attributes.
-        :return:
         """
         if self.promotion:
             return (f"{self.name}, "
@@ -130,11 +139,21 @@ class Product:
 
 
 class NonStockedProduct(Product):
+    """
+    Child class of a Product.
+    Represents a virtual product which does not have a limit of units.
+    """
     def __init__(self, name, price, quantity=0):
+        """
+        Initializes a product with quantity null.
+        """
         super().__init__(name, price, quantity)
 
 
     def are_args_valid(self, name, price, quantity):
+        """
+        Checks if no quantity is passed during initialization.
+        """
         args_valid = super().are_args_valid(name, price, quantity)
         if quantity == 0:
             args_valid = True
@@ -154,12 +173,24 @@ class NonStockedProduct(Product):
                     f"Price: {locale.currency(self.price, grouping=True)}")
 
     def buy(self, quantity):
-        purchase_price = self.price * quantity
+        if self.promotion is not None:
+            purchase_price = self.promotion.apply_promotion(self, quantity)
+        else:
+            purchase_price = self.price * quantity
+
         return purchase_price
 
 
 class LimitedProduct(Product):
+    """
+    Child class of Product.
+    Dedicated for a special product which can only be added once per purchase.
+    """
     def __init__(self, name, price, quantity, maximum=1):
+        """
+        Initializes the product with a special parameter maximum,
+        it is a limit of how many times a product can be purchased per transaction.
+        """
         super().__init__(name, price, quantity)
         self.maximum = maximum
 
@@ -179,7 +210,10 @@ class LimitedProduct(Product):
                     f"Maximum: {self.maximum}")
 
 
-
     def buy(self, quantity):
-        purchase_price = self.price * quantity
+        if self.promotion is not None:
+            purchase_price = self.promotion.apply_promotion(self, quantity)
+        else:
+            purchase_price = self.price * quantity
+
         return purchase_price

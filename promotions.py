@@ -2,6 +2,10 @@ from abc import ABC, abstractmethod
 
 @abstractmethod
 class Promotion(ABC):
+    """
+    Creates an abstract Promotion object.
+    Is a parent class for different types of promotions.
+    """
 
     def __init__(self, type):
         self.type = type
@@ -13,6 +17,9 @@ class Promotion(ABC):
 class SecondHalfPrice(Promotion):
 
     def apply_promotion(self, product, quantity):
+        """
+        Applies promotions by deducting half a price of every second item.
+        """
         no_of_discounted_items = quantity // 2
 
         full_price_items = quantity - no_of_discounted_items
@@ -27,6 +34,9 @@ class SecondHalfPrice(Promotion):
 class ThirdOneFree(Promotion):
 
     def apply_promotion(self, product, quantity):
+        """
+        Applies promotions by deducting full price of every third item.
+        """
         no_of_discounted_items = quantity // 3
         pay_for = quantity - no_of_discounted_items
 
@@ -41,7 +51,10 @@ class PercentDiscount(Promotion):
         self.percent = percent
 
     def apply_promotion(self, product, quantity):
-        discount = 1.0 - self.percent
+        """
+        Applies promotions by deducting percentage of price of every item.
+        """
+        discount = (100 - self.percent) / 100
         discounted_price = (product.price * quantity) * discount
 
         return discounted_price
