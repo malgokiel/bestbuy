@@ -3,6 +3,9 @@ from abc import ABC, abstractmethod
 @abstractmethod
 class Promotion(ABC):
 
+    def __init__(self, type):
+        self.type = type
+
     def apply_promotion(self, product, quantity):
         pass
 
@@ -33,9 +36,12 @@ class ThirdOneFree(Promotion):
 
 class PercentDiscount(Promotion):
 
-    discount = 0.8
+    def __init__(self, type, percent):
+        super().__init__(type)
+        self.percent = percent
 
     def apply_promotion(self, product, quantity):
+        discount = 1.0 - self.percent
         discounted_price = (product.price * quantity) * discount
 
         return discounted_price

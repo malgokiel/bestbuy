@@ -1,4 +1,5 @@
 import locale
+import promotions
 
 class Product:
     """
@@ -27,6 +28,7 @@ class Product:
                 self.name = name
                 self.price = price
                 self.quantity = quantity
+                self.promotion = None
                 Product.activate(self)
         except ValueError as parameter_error:
             print(parameter_error)
@@ -43,6 +45,14 @@ class Product:
             args_valid = True
 
         return args_valid
+
+
+    def get_promotion(self):
+        return self.promotion
+
+
+    def set_promotion(self, promotion):
+        self.promotion = promotion
 
 
     def get_quantity(self):
@@ -87,9 +97,15 @@ class Product:
         Returns a string representation of a product showing its attributes.
         :return:
         """
-        return (f"{self.name}, "
-                f"Price: {locale.currency(self.price, grouping=True)}, "
-                f"Quantity: {int(self.quantity)}")
+        if self.promotion:
+            return (f"{self.name}, "
+                    f"Price: {locale.currency(self.price, grouping=True)}, "
+                    f"Quantity: {int(self.quantity)}, "
+                    f"Promotion: {self.promotion.type}")
+        else:
+            return (f"{self.name}, "
+                    f"Price: {locale.currency(self.price, grouping=True)}, "
+                    f"Quantity: {int(self.quantity)}")
 
 
     def buy(self, quantity):
@@ -105,7 +121,10 @@ class Product:
         else:
             self.quantity = self.get_quantity() - quantity
             self.set_quantity(self.quantity)
-            purchase_price = self.price * quantity
+            if self.promotion is not None:
+                purchase_price = self.promotion.apply_promotion(self, quantity)
+            else:
+                purchase_price = self.price * quantity
 
             return purchase_price
 
@@ -126,8 +145,13 @@ class NonStockedProduct(Product):
         """
         Returns a string representation of a product showing its attributes.
         """
-        return (f"{self.name}, "
-                f"Price: {locale.currency(self.price, grouping=True)}")
+        if self.promotion:
+            return (f"{self.name}, "
+                    f"Price: {locale.currency(self.price, grouping=True)}, "
+                    f"Promotion: {self.promotion.type}")
+        else:
+            return (f"{self.name}, "
+                    f"Price: {locale.currency(self.price, grouping=True)}")
 
     def buy(self, quantity):
         purchase_price = self.price * quantity
@@ -144,9 +168,16 @@ class LimitedProduct(Product):
         """
         Returns a string representation of a product showing its attributes.
         """
-        return (f"{self.name}, "
-                f"Price: {locale.currency(self.price, grouping=True)}, "
-                f"Maximum: {self.maximum}")
+        if self.promotion:
+            return (f"{self.name}, "
+                    f"Price: {locale.currency(self.price, grouping=True)}, "
+                    f"Maximum: {self.maximum}, "
+                    f"Promotion: {self.promotion.type}")
+        else:
+            return (f"{self.name}, "
+                    f"Price: {locale.currency(self.price, grouping=True)}, "
+                    f"Maximum: {self.maximum}")
+
 
 
     def buy(self, quantity):
